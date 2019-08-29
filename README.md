@@ -1,8 +1,8 @@
 Finder_of_winners_in_instagram_competition
 =====================
 Description how to work this script:  
-This script is collect applicants on instagram competition winner.
-Script is get you users which: liked post, followed page, add comment with name of any friend.
+This script is collect applicants on instagram competition winner.  
+Script provide you users, which:  liked post, followed page, added comment with name of any friend.
 
 Python3 should be already installed. Then use pip (or pip3, if there is a conflict with Python2) to install dependencies:
 ```pip install -r requirements.txt```
