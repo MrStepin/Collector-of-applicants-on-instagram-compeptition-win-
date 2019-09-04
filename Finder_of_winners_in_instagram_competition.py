@@ -5,37 +5,42 @@ import re
 import argparse
 import sys
 
-def createParser():
+def createparser():
     parser = argparse.ArgumentParser()
     parser.add_argument('url')
     return parser
 
-def get_comments_list(all_comments):
-    comments_list = []
+def get_comments(all_comments):
+    comments = []
+    correct_comment = re.findall(r"@([a-zA-Z0-9]{1,15})", str(comment_text["text"]))
     for comment_text in all_comments:
-        if re.findall(r"@([a-zA-Z0-9]{1,15})", str(comment_text["text"])) !=[]:
-            comments_list.append(re.findall(r"@([a-zA-Z0-9]{1,15})", str(comment_text["text"])))
-    return comments_list
+        if correct_comment !=[]:
+            comments.append(correct_comment)
+    return comments
 
 def is_user_exist(user_id):
-    if user_id == None:
-        return False
-    else: 
-        return True
+    return user_id == None
 
-def likers_users(existing_users_list):
-    for existing_user_id in existing_users_list:
-        likers_user_list = bot.get_media_likers(existing_user_id[0])	
-        if likers_user_list[0] != existing_user_id[0]:
-            existing_users_list.remove(existing_user_id)
-    return existing_users_list  
+def get_likers_users(existing_users):
+    for existing_user_id in existing_users:
+        try:
+            userid_applicant, userid_friend = existing_user_id
+        except ValueError:
+            pass 
+        likers_user = bot.get_media_likers(userid_applicant)	
+        if likers_user[0] != userid_applicant:
+            try:
+                existing_users.remove(existing_user_id)
+            except IndexError: 
+                pass      
+    return existing_users 
 
-def followers(exist_and_likers_user_list):   
-    for existing_user_id in exist_and_likers_user_list:
-        followers_user_list = bot.get_user_followers("beautybar.rus")	
-        if followers_user_list[0] != existing_user_id[0]:
-            exist_and_likers_user_list.remove(existing_user_id)
-    return exist_and_likers_user_list        
+def get_followers(exist_and_likers_user):   
+    for existing_user_id in exist_and_likers_user:
+        followers_user = bot.get_user_followers("beautybar.rus")	
+        if followers_user[0] != existing_user_id[0]:
+            exist_and_likers_user.remove(existing_user_id)
+    return exist_and_likers_user        
 
 if __name__ == '__main__': 
 
@@ -45,29 +50,36 @@ if __name__ == '__main__':
     bot = Bot()
     bot.login(username = login, password = password)
 
-    entered_links = createParser()
-    competition_link = entered_links.parse_args()
+    entered_links = createparser()
+    cmd_argument = entered_links.parse_args()
 
-    post_id = bot.get_media_id_from_link(competition_link.url)
+    post_id = bot.get_media_id_from_link(cmd_argument.url)
     all_comments = bot.get_media_comments_all(post_id)
 
-    comments_list = get_comments_list(all_comments)
+    comments = get_comments(all_comments)
 
-    for user_name in comments_list:
-        user_id = bot.get_user_id_from_username(user_name[0])
-        existing_users_list = []
-        if is_user_exist(user_id) == True:
+    for user_name in comments:
+        try:
+            applicant_user_name, friend_user_name = user_name
+        except ValueError:
+            pass    
+        user_id = bot.get_user_id_from_username(applicant_user_name)
+        existing_users = []
+        if is_user_exist(user_id):
             try:	
-                friend_user_id = bot.get_user_id_from_username(user_name[1])
+                friend_user_id = bot.get_user_id_from_username(friend_user_name)
             except IndexError: 
                 pass   	
-            if is_user_exist(friend_user_id) == True:
-                username_and_id = (user_id, user_name[0])		
-                existing_users_list.append(username_and_id)
+            if is_user_exist(friend_user_id):
+                username_and_id = (user_id, applicant_user_name)
+                try: 		
+                    existing_users.append(username_and_id)
+                except IndexError: 
+                    pass  
 
-    exist_and_likers_user_list = likers_users(existing_users_list)
-    foll_exist_likes_userlist = followers(exist_and_likers_user_list)
+    exist_and_likers_user = get_likers_users(existing_users)
+    foll_exist_likes_user = get_followers(exist_and_likers_user)
 
-    for name_of_user in foll_exist_likes_userlist:
-        final_list = set(name_of_user[1])	
-    print(final_list)
+    for number, name_of_user in enumerate(foll_exist_likes_user, 1):
+        final_list = set(name_of_user)	
+        print("{0}. {1}".format(number, final_list))
