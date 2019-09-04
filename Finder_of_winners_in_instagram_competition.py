@@ -28,7 +28,7 @@ def get_likers_users(existing_users):
         except ValueError:
             pass 
         likers_user = bot.get_media_likers(userid_applicant)	
-        if likers_user[0] != userid_applicant:
+        if likers_user != userid_applicant:
             try:
                 existing_users.remove(existing_user_id)
             except IndexError: 
