@@ -15,7 +15,8 @@ For example:
 
 Script will works several minutes(it depends from qty of comments)
 Result: 
-```1. koshkaanka
+```
+1. koshkaanka
 2. coolsonic2014
 3. iorlaa
 4. lybava19
