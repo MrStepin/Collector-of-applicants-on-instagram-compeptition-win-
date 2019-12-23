@@ -1,4 +1,4 @@
-Finder_of_applicants_in_instagram_competition
+tool_for_instagram_competition
 =====================
  
 This script collects applicants on winner of instagram competition.  
