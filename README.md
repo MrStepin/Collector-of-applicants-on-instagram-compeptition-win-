@@ -12,7 +12,7 @@ How to use this script:
 * Create file  ```.env``` with you instagram login and password, like this: ```LOGIN=123``` ```PASSWORD=111```
 * Execute this script in CMD with URL of competition and name of page as arguments.
 For example:  
-```tool for instagram competition.py "https://www.instagram.com/p/BtON034lPhu/" "beautybar.rus"```
+```tool_for_instagram_competition.py "https://www.instagram.com/p/BtON034lPhu/" "beautybar.rus"```
 
 Script will work for several minutes (it depends from qty of comments)
 Result: 
