@@ -38,8 +38,8 @@ def get_followers(exist_and_likers_user):
 if __name__ == '__main__': 
 
     load_dotenv()
-    login = os.getenv('login')
-    password = os.getenv('password')
+    login = os.getenv('LOGIN')
+    password = os.getenv('PASSWORD')
     bot = Bot()
     bot.login(username = login, password = password)
 
@@ -49,31 +49,37 @@ if __name__ == '__main__':
     post_id = bot.get_media_id_from_link(cmd_arguments.url)
     all_comments = bot.get_media_comments_all(post_id)
     
-    mentions_of_comments = []
-    for comment in all_comments[0:10]:
-        applicant_user_name = comment['user']['username']
-        mentions = get_mentions(comment)
+    comment_owner_username_with_mentions = []
+    for comment in all_comments:
+        try:
+            mentions = get_mentions(comment)
+        except TypeError: 
+            pass             
         if mentions:
-            mentions_of_comments.append(mentions)
+            applicant_user_name = comment['user']['username']
+            username_and_mentions = (applicant_user_name, mentions)
+            comment_owner_username_with_mentions.append(username_and_mentions) 
 
     existing_users = []
-    for mentioned_user_names in mentions_of_comments:
+    comment_mentions = 1
+    comment_owner = 0
+    for comment_owner_with_mention in comment_owner_username_with_mentions:
         try:
-            friend1_user_name, friend2_user_name = mentioned_user_names
+            friend1_user_name, friend2_user_name = comment_owner_with_mention[comment_mentions]
         except ValueError:
             pass
         try:       
             friend2_user_id = bot.get_user_id_from_username(friend2_user_name)
             friend1_user_id = bot.get_user_id_from_username(friend1_user_name) 
-        except IndexError: 
+        except TypeError: 
             pass         
-        if friend1_user_id or friend2_user_id:
+        if friend1_user_id and friend2_user_id:
             try:	
-                applicant_user_id = bot.get_user_id_from_username(applicant_user_name)
+                applicant_user_id = bot.get_user_id_from_username(comment_owner_with_mention[comment_owner])
             except IndexError: 
                 pass   	
             if applicant_user_id:
-                username_and_id = (applicant_user_id, applicant_user_name)
+                username_and_id = (applicant_user_id, comment_owner_with_mention[comment_owner])
                 try: 		
                     existing_users.append(username_and_id)
                 except IndexError: 
