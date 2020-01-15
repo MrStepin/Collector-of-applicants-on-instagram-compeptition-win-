@@ -61,11 +61,10 @@ if __name__ == '__main__':
             comment_owner_username_with_mentions.append(username_and_mentions) 
 
     existing_users = []
-    comment_mentions = 1
-    comment_owner = 0
     for comment_owner_with_mention in comment_owner_username_with_mentions:
+        comment_owner, comment_mentions = comment_owner_with_mention
         try:
-            friend1_user_name, friend2_user_name = comment_owner_with_mention[comment_mentions]
+            friend1_user_name, friend2_user_name = comment_mentions[:2]
         except ValueError:
             pass
         try:       
@@ -75,11 +74,11 @@ if __name__ == '__main__':
             pass         
         if friend1_user_id and friend2_user_id:
             try:	
-                applicant_user_id = bot.get_user_id_from_username(comment_owner_with_mention[comment_owner])
+                applicant_user_id = bot.get_user_id_from_username(comment_owner)
             except IndexError: 
                 pass   	
             if applicant_user_id:
-                username_and_id = (applicant_user_id, comment_owner_with_mention[comment_owner])
+                username_and_id = (applicant_user_id, comment_owner)
                 try: 		
                     existing_users.append(username_and_id)
                 except IndexError: 
